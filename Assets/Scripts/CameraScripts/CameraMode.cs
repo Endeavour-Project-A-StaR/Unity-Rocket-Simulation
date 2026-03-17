@@ -1,0 +1,1 @@
+public enum CameraMode { Chase, Orbit, Fixed }
