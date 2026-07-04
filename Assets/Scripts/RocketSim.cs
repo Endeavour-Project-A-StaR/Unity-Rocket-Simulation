@@ -183,25 +183,28 @@ public class RocketSim : MonoBehaviour
         if (Mathf.Abs(canardAngles[0]) > 0.01f)
         {
             //Debug.Log("Canard lift");
-            Vector3 normalDir = canardTransforms[0].up;
+            Vector3 normalDir = Quaternion.AngleAxis(canardAngles[0], transform.forward) * transform.right; // normal in world coords
             canardForce = normalDir * canardTempCoeff * Mathf.Sin(canardAngles[0] * Mathf.Deg2Rad);
             rb.AddForceAtPosition(canardForce, transform.TransformPoint(new Vector3(rocketDiameter / 2f, canardsHeight, 0)));
         }
         if (Mathf.Abs(canardAngles[1]) > 0.01f)
         {
-            Vector3 normalDir = -canardTransforms[1].right;
+            Vector3 normalDir = Quaternion.AngleAxis(canardAngles[1], transform.right) * transform.forward; // normal in world coords
+            //Vector3 normalDir = -canardTransforms[1].right;
             canardForce = normalDir * canardTempCoeff * Mathf.Sin(canardAngles[1] * Mathf.Deg2Rad);
             rb.AddForceAtPosition(canardForce, transform.TransformPoint(new Vector3(0, canardsHeight, rocketDiameter / 2f)));
         }
         if (Mathf.Abs(canardAngles[2]) > 0.01f)
         {
-            Vector3 normalDir = -canardTransforms[2].up;
+            Vector3 normalDir = Quaternion.AngleAxis(-canardAngles[2], transform.forward) * transform.right; // normal in world coords
+            //Vector3 normalDir = -canardTransforms[2].up;
             canardForce = normalDir * canardTempCoeff * Mathf.Sin(canardAngles[2] * Mathf.Deg2Rad);
             rb.AddForceAtPosition(canardForce, transform.TransformPoint(new Vector3(-rocketDiameter / 2f, canardsHeight, 0)));
         }
         if (Mathf.Abs(canardAngles[3]) > 0.01f)
         {
-            Vector3 normalDir = canardTransforms[3].right;
+            Vector3 normalDir = Quaternion.AngleAxis(-canardAngles[3], transform.right) * transform.forward; // normal in world coords
+            //Vector3 normalDir = canardTransforms[3].right;
             canardForce = normalDir * canardTempCoeff * Mathf.Sin(canardAngles[3] * Mathf.Deg2Rad);
             rb.AddForceAtPosition(canardForce, transform.TransformPoint(new Vector3(0, canardsHeight, -rocketDiameter / 2f)));
         }
@@ -343,6 +346,10 @@ public class RocketSim : MonoBehaviour
     public float GetSpeed()    { return rb.linearVelocity.magnitude;}
 
     public float GetAltitude()    { return transform.position.y;}
+
+    public bool IsEngineOn()    { return engineOn; }
+
+    public float GetGravity()    { return gravity; }
 
 
     // This is called at the end of the render cycle.

@@ -1,0 +1,27 @@
+# Normalize text without rewriting existing files until they are changed/staged.
+* text=auto
+*.md text eol=lf
+*.cs text
+*.json text
+*.asmdef text
+*.meta text
+*.unity text
+*.prefab text
+*.asset text
+*.mat text
+*.controller text
+*.anim text
+*.shader text
+*.hlsl text
+
+# Do not attempt textual merges/diffs for binary media.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.fbx binary
+*.blend binary
+*.ttf binary
+*.wav binary
+*.mp3 binary
+*.mp4 binary

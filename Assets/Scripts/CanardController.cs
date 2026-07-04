@@ -1,112 +1,105 @@
-using NUnit.Framework;
-using UnityEngine;
+ï»¿using UnityEngine;
+
+/*
+ * Manages four canard transforms and exposes their angles to RocketSim.
+ * Canards 0/2 share the pitch command; 1/3 share the yaw command.
+ * Angles are in degrees. Disable manual input when using the PID.
+ * ! The visual hinge axes and force directions still need to be checked.
+ */
 
 public class CanardController : MonoBehaviour
 {
     [Header("Canard References")]
-    [SerializeField] private Transform canardsParent; // Assign the "canards" parent object
+    [SerializeField] private Transform canardsParent;       // Assign the "Canards" parent object
 
     [Header("Control Settings")]
-    [SerializeField] private float maxDeflectionAngle = 20f; // Maximum deflection in degrees
-    [SerializeField] private float deflectionSpeed = 60f; // Degrees per second
+    [SerializeField] private float maxDeflectionAngle = 20f;  // degrees
+    [SerializeField] private float deflectionSpeed = 60f;  // degrees per second (manual input rate)
 
-    [Header("Current Deflections")]
-    [SerializeField] private float pitchDeflection = 0f; // Up/Down (Z-axis rotation)
-    [SerializeField] private float yawDeflection = 0f;   // Left/Right (X-axis rotation)
+    [Header("Current Deflections (read-only in play mode)")]
+    [SerializeField] private float pitchDeflection = 0f;    // nose-up/down  (body X-plane)
+    [SerializeField] private float yawDeflection = 0f;    // nose-left/right (body Z-plane)
 
+    [Header("Manual Input")]
+    [SerializeField] private bool allowManualInput = false; // Disable when PID is active
     private Transform[] canards;
-    private float[] canardAngles;
+    private float[] canardAngles;   // exposed to RocketSim for force calculation
 
     void Start()
     {
         canards = new Transform[4];
         canardAngles = new float[4];
-
-        for (int i = 0; i < 4; i++) { canards[i] = canardsParent.GetChild(i); }
+        for (int i = 0; i < 4; i++)
+            canards[i] = canardsParent.GetChild(i);
     }
 
     void Update()
     {
-        ManageInput();
+        if (allowManualInput)
+            ManageInput();
+
         ApplyCanardRotations();
     }
 
     void ManageInput()
     {
-        // Left/Right arrows yaw control
-        if (Input.GetKey(KeyCode.LeftArrow)) { yawDeflection -= deflectionSpeed * Time.deltaTime; }
-        else if (Input.GetKey(KeyCode.RightArrow)) { yawDeflection += deflectionSpeed * Time.deltaTime; }
-        else { yawDeflection = Mathf.MoveTowards(yawDeflection, 0f, deflectionSpeed * Time.deltaTime); }
-        
+        if (Input.GetKey(KeyCode.LeftArrow))
+            yawDeflection -= deflectionSpeed * Time.deltaTime;
+        else if (Input.GetKey(KeyCode.RightArrow))
+            yawDeflection += deflectionSpeed * Time.deltaTime;
+        else
+            yawDeflection = Mathf.MoveTowards(yawDeflection, 0f, deflectionSpeed * Time.deltaTime);
 
-        // Up/Down arrows pitch control
-        //if (Input.GetKey(KeyCode.UpArrow)){ pitchDeflection += deflectionSpeed * Time.deltaTime; }
-        //else if (Input.GetKey(KeyCode.DownArrow)) { pitchDeflection -= deflectionSpeed * Time.deltaTime; }
-        //else { pitchDeflection = Mathf.MoveTowards(pitchDeflection, 0f, deflectionSpeed * Time.deltaTime);  }
+        if (Input.GetKey(KeyCode.UpArrow))
+            pitchDeflection += deflectionSpeed * Time.deltaTime;
+        else if (Input.GetKey(KeyCode.DownArrow))
+            pitchDeflection -= deflectionSpeed * Time.deltaTime;
+        else
+            pitchDeflection = Mathf.MoveTowards(pitchDeflection, 0f, deflectionSpeed * Time.deltaTime);
 
-        // Clamp to max deflection angles
+        pitchDeflection = Mathf.Clamp(pitchDeflection, -maxDeflectionAngle, maxDeflectionAngle);
         yawDeflection = Mathf.Clamp(yawDeflection, -maxDeflectionAngle, maxDeflectionAngle);
-        //pitchDeflection = Mathf.Clamp(pitchDeflection, -maxDeflectionAngle, maxDeflectionAngle); // !Removed for now 
     }
 
+    // Update visual rotations and the angles read by RocketSim.
     void ApplyCanardRotations()
     {
-        if (canards == null || canards.Length == 0) return;
-
-        // This applies the same deflection to all canards. The index matches the canard name/position in the hierarchy
-        // Viewed from above, the canards are ordered 0-3 where 0 is normal in the rocket x direction, 1 is normal in the y direction
-        // and so on moving anticlockwise from a top-down view
-        // Canard deflections are applied clockwise in units of degrees from an external view (looking at the canard normally)
-        canards[0].localRotation = Quaternion.Euler(yawDeflection, 0, 0);
-        canardAngles[0] = yawDeflection;
+        if (canards == null || canards.Length < 4) return;
+        canards[0].localRotation = Quaternion.Euler(pitchDeflection, 0, 0);
+        canardAngles[0] = pitchDeflection;
         canards[1].localRotation = Quaternion.Euler(0, yawDeflection, 0);
         canardAngles[1] = yawDeflection;
-        canards[2].localRotation = Quaternion.Euler(-yawDeflection, 0, 0);
-        canardAngles[2] = yawDeflection;
-        canards[3].localRotation = Quaternion.Euler(0, -yawDeflection, 0);
+        canards[2].localRotation = Quaternion.Euler(pitchDeflection, 0, 0);
+        canardAngles[2] = pitchDeflection;
+        canards[3].localRotation = Quaternion.Euler(0, yawDeflection, 0);
         canardAngles[3] = yawDeflection;
     }
 
-
-
-    
-    public float GetPitchDeflection()
+    public void SetDeflections(float pitch, float yaw)
     {
-        return pitchDeflection;
+        pitchDeflection = Mathf.Clamp(pitch, -maxDeflectionAngle, maxDeflectionAngle);
+        yawDeflection = Mathf.Clamp(yaw, -maxDeflectionAngle, maxDeflectionAngle);
     }
 
-    public float GetYawDeflection()
-    {
-        return yawDeflection;
-    }
-
-    // Optional: Reset to neutral position
+    // Reset commands; the angles and transforms update on the next Update.
     public void ResetCanards()
     {
         pitchDeflection = 0f;
         yawDeflection = 0f;
     }
 
-    public float[] GetCanardAngles()
-    {
-        return canardAngles;
-    }
-
-    public Transform[] GetCanardTransforms()
-    {
-        return canards;
-    }
-
-    public float GetCanardsHeight() 
-    {
-        return 0.9f;
-    }
+    public float[] GetCanardAngles() => canardAngles;
+    public Transform[] GetCanardTransforms() => canards;
+    public float GetPitchDeflection() => pitchDeflection;
+    public float GetYawDeflection() => yawDeflection;
+    public float GetCanardsHeight() => 0.9f;
+    public float GetMaxDeflection() => maxDeflectionAngle;
 
     void OnGUI()
     {
-        // Simple HUD to show current deflections
-        GUI.Label(new Rect(10, 10, 200, 20), $"Pitch: {pitchDeflection:F1}°");
-        GUI.Label(new Rect(10, 30, 200, 20), $"Yaw: {yawDeflection:F1}°");
-        GUI.Label(new Rect(10, 50, 300, 20), "Arrow Keys: Control Canards");
+        GUI.Label(new Rect(10, 10, 200, 20), $"Pitch deflection: {pitchDeflection:F2}Â°");
+        GUI.Label(new Rect(10, 30, 200, 20), $"Yaw deflection:   {yawDeflection:F2}Â°");
+        string inputMode = allowManualInput ? "Manual (arrow keys)" : "PID";
+        GUI.Label(new Rect(10, 50, 300, 20), $"Control mode: {inputMode}");
     }
 }

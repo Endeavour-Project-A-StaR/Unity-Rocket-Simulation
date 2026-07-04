@@ -4078,7 +4078,7 @@ GameObject:
   - component: {fileID: 400885864592354393}
   - component: {fileID: 7131798316676024968}
   m_Layer: 0
-  m_Name: Canard3
+  m_Name: 3_Canard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4096,7 +4096,7 @@ GameObject:
   - component: {fileID: 2255479491830283483}
   - component: {fileID: 6856829280850510055}
   m_Layer: 0
-  m_Name: Canard2
+  m_Name: 2_Canard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4296,7 +4296,7 @@ GameObject:
   - component: {fileID: 4222670691885406764}
   - component: {fileID: 3157757601152701952}
   m_Layer: 0
-  m_Name: Canard0
+  m_Name: 0_Canard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4535,6 +4535,9 @@ GameObject:
   - component: {fileID: 5409036959253601240}
   - component: {fileID: 5409036959253601241}
   - component: {fileID: 5409036959253601239}
+  - component: {fileID: 5409036959253601242}
+  - component: {fileID: 7094724916406164840}
+  - component: {fileID: 6619357451240133648}
   m_Layer: 0
   m_Name: TheRocket
   m_TagString: Untagged
@@ -4740,7 +4743,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 0.923
   m_LinearDamping: 0
-  m_AngularDamping: 2
+  m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: -0.15, z: 0}
   m_InertiaTensor: {x: 0.4298, y: 0.001, z: 0.4298}
   m_InertiaRotation: {x: 0.0037507103, y: -0.000005341254, z: 0.0037506446, w: 0.99998593}
@@ -4780,6 +4783,27 @@ CapsuleCollider:
   m_Height: 1.19
   m_Direction: 1
   m_Center: {x: 0, y: 0.595, z: 0}
+--- !u!114 &5409036959253601242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409036959253601238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b939d2a5de651c247821ad4fb1780e2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RocketPIDController
+  canardController: {fileID: 7403775085066072118}
+  Kp: 8
+  Ki: 0.1
+  Kd: 2
+  integralClamp: 10
+  minSpeedForControl: 5
+  pidActive: 1
+  activeOnlyDuringBurn: 0
+  showDebugGUI: 1
 --- !u!4 &5529578431533960235
 Transform:
   m_ObjectHideFlags: 0
@@ -5101,6 +5125,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &6619357451240133648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409036959253601238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61131eae9cce4ed9bb0939e39f32085b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlightRecorder
+  rocketSim: {fileID: 5409036959253601239}
+  canardController: {fileID: 7403775085066072118}
+  sensorSimulator: {fileID: 7094724916406164840}
+  recordOnStart: 1
+  autoStopWhenLanded: 1
+  outputFolderName: FlightLogs
+  flushEveryNFrames: 50
 --- !u!4 &6654951463621777021
 Transform:
   m_ObjectHideFlags: 0
@@ -5222,7 +5265,7 @@ GameObject:
   - component: {fileID: 7020942487711835439}
   - component: {fileID: 8260001023245533822}
   m_Layer: 0
-  m_Name: Canard1
+  m_Name: 1_Canard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5236,6 +5279,43 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6902987008112915163}
   m_Mesh: {fileID: 2839895755822931525, guid: f1f63f778717f6a46b69397abf981f3c, type: 3}
+--- !u!114 &7094724916406164840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409036959253601238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbdbb730d6b34cdf87eebe34f4309fce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SensorSimulator
+  rocketSim: {fileID: 5409036959253601239}
+  canardController: {fileID: 7403775085066072118}
+  useFixedSeed: 0
+  randomSeed: 12345
+  accelNoiseStdDev: 0.05
+  accelBiasStdDev: 0.1
+  accelSampleRateHz: 50
+  accelDelaySeconds: 0
+  gyroNoiseStdDev: 0.01
+  gyroBiasDriftStdDev: 0.0005
+  gyroBiasMax: 0.05
+  gyroSampleRateHz: 50
+  gyroDelaySeconds: 0
+  seaLevelPressure: 101325
+  baroScaleHeight: 8500
+  baroNoiseStdDev: 5
+  baroBiasStdDev: 50
+  baroSampleRateHz: 20
+  baroDelaySeconds: 0.02
+  phaseConfirmTicks: 3
+  descentVelocityThreshold: -0.5
+  landedAltitudeMargin: 0.3
+  landedSpeedThreshold: 0.15
+  fuelEpsilon: 0.0005
+  showDebugGUI: 0
 --- !u!23 &7131798316676024968
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5457,6 +5537,7 @@ MonoBehaviour:
   deflectionSpeed: 120
   pitchDeflection: 0
   yawDeflection: 0
+  allowManualInput: 0
 --- !u!33 &7583390459300832461
 MeshFilter:
   m_ObjectHideFlags: 0
