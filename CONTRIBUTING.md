@@ -1,22 +1,22 @@
 # Contributing
 
+This markdown is a template for future work with a larger team. It is not currently enforced.
+
 ## Working agreement
 
 Keep contributions small enough for another member to review. Each task should state the behaviour being changed, an owner, a reviewer, and how completion will be demonstrated. Pair on unfamiliar code and share a runnable result regularly.
 
-Do not combine a physics change, scene reorganisation, and formatting cleanup in one pull request.
+Do not combine a physics change, scene reorganisation, and formatting cleanup in one PR. Use the `develop` branch before merging to `main`.
+
+If it contains someone else's work, preserve it and establish ownership before switching the base or staging files. Never reset or clean the checkout to make the status look tidy.
 
 ## Git workflow
 
 Run commands from the repository root. Before starting:
 
 ```sh
-git status
 git fetch origin
-git switch -c codex/short-task-name
 ```
-
-Start from the team's agreed integration branch when the working tree is clean. If it contains someone else's work, preserve it and establish ownership before switching the base or staging files. Never reset or clean the checkout to make the status look tidy.
 
 After making and checking a change:
 
@@ -28,13 +28,13 @@ git commit -m "docs: explain the reference simulation"
 git push -u origin HEAD
 ```
 
-Stage the specific intended files, including matching .meta files for changed assets. Open a pull request describing the change, its reason, and the checks performed. Use the repository's agreed integration branch as the target.
+Stage the specific intended files, including matching .meta files for changed assets. Open a PR describing the change, its reason, and the checks performed. Use the repository's agreed integration branch as the target.
 
 A detached HEAD can occur in an isolated checkout. Create a named task branch before committing or pushing. Do not force-push shared branches.
 
 ## Unity-specific rules
 
-- Use the editor version in ProjectSettings/ProjectVersion.txt.
+- Use the editor version in ProjectSettings/ProjectVersion.txt (currently 6000.3.4f1).
 - Keep **Asset Serialization: Force Text** and **Version Control: Visible Meta Files**. Both are already configured.
 - Move or rename assets through Unity so their GUIDs and .meta files remain paired.
 - Coordinate scene editing: avoid two people rearranging RocketScene simultaneously.
