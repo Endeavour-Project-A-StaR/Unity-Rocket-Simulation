@@ -1,6 +1,6 @@
 # Verification
 
-Use this as a guideline to run tests. I need someone to test things out.
+Guideline for future tests. Hasn't been used yet.
 
 ## Clean-clone run
 
