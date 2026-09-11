@@ -1,6 +1,8 @@
 # Model assumptions, structure, and limitations
 
-As of currently, there are no 
+The current model is quite simple and canard actuation relies on a highly simplified aerodynamic model.
+
+![Rocket](../Images/TheRocket.png)
 
 ## Coordinates and units
 
