@@ -2,6 +2,8 @@
 
 A prototype simulation for A-StaR's rocket. The simulation aims to tackle dynamic canard actuation with reasonable realism and sensor logging, aiming to provide finer tuning and improved control algorithms.
 
+![Flight Screenshot](Images/flight0.png)
+
 ## Start here
 
 1. Install Unity Hub and Unity Editor (currently on version 6000.3.4f1), matching `ProjectSettings/ProjectVersion.txt`.
